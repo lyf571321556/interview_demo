@@ -45,8 +45,8 @@
 [✓] Network resources
     • All expected network resources are available.
 ```
-## 效果图
-    ![抠图效果预览][1]
+## iOS&Android效果图
+   ![效果预览][1]
 
 
 
