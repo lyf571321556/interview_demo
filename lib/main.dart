@@ -43,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _maskStreamController = StreamController();
     _maskStream = _maskStreamController!.stream.asBroadcastStream();
-    // startApplyMask();
+    startApplyMask();
   }
 
   @override
@@ -68,6 +68,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("利用遮罩实现抠图"),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
