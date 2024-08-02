@@ -76,9 +76,6 @@ import Flutter
         }
     
         UIGraphicsBeginImageContextWithOptions(originalImage.size, false, originalImage.scale)
-//        guard let context = UIGraphicsGetCurrentContext() else {
-//            return nil
-//        }
         
         guard let originalCGImage = originalImage.cgImage, let maskCGImage = maskImage.cgImage else {
             return nil
@@ -114,10 +111,6 @@ import Flutter
                 let green = maskImagePixelBuffer[pixelOffset + 1]
                 let blue = maskImagePixelBuffer[pixelOffset + 2]
                 let alpha = maskImagePixelBuffer[pixelOffset + 3]
-//                print("red:\(red)")
-//                print("green:\(green)")
-//                print("blue:\(blue)")
-//                print("alpha:\(alpha)")
                 if(alpha==255 && red==255 && green==255 && blue==255){
                     outputData[pixelOffset] = originalImagePixelBuffer[pixelOffset]
                     outputData[pixelOffset + 1] = originalImagePixelBuffer[pixelOffset + 1]
@@ -134,32 +127,7 @@ import Flutter
         
         let outputDataProvider = CGDataProvider(data: NSData(bytes: outputData, length: width * height * 4))
         let outputCGImage = CGImage(width: width, height: height, bitsPerComponent: bitsPerComponent, bitsPerPixel: bytesPerPixel * 8, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue), provider: outputDataProvider!, decode: nil, shouldInterpolate: true, intent: .defaultIntent)!
-        
-//        for y in 0..<height {
-//               for x in 0..<width {
-//                   let offset = (y * width + x) * bytesPerPixel
-//                   let red = maskImagePixelBuffer[offset + 0]
-//                   let green = maskImagePixelBuffer[offset + 1]
-//                   let blue = maskImagePixelBuffer[offset + 2]
-//                   let alpha = maskImagePixelBuffer[offset + 3]
-//                   print("red:\(red)")
-//                   print("green:\(green)")
-//                   print("blue:\(blue)")
-//                   print("alpha:\(alpha)")
-//                   if alpha == 255 {
-//                       // 保留原图对应位置的像素值
-//                       let color = originalCGImage.color(at: CGPoint(x: x, y: y))
-//                       context.setFillColor(color.cgColor)
-//                   } else {
-//                       // 将原图对应位置的像素设置为透明
-//                       context.setFillColor(UIColor.clear.cgColor)
-//                   }
-//
-//                   context.fill(CGRect(x: x, y: y, width: 1, height: 1))
-//               }
-//           }
-//
-//        let processedImage = UIGraphicsGetImageFromCurrentImageContext()
+
         let processedImage =  UIImage(cgImage: outputCGImage)
         UIGraphicsEndImageContext()
         

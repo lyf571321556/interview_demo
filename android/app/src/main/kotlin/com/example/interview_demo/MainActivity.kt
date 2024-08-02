@@ -38,7 +38,6 @@ class MainActivity : FlutterActivity() {
                 MaskMethod.applyMaskToImage.value -> {
                     GlobalScope.launch(Dispatchers.IO) {
                         try {
-                            println(method)
                             if (call.arguments !is Map<*, *>) {
                                 result.error("InvaliedParams", "Map<*, *> is required", "")
                                 return@launch
