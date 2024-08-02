@@ -46,4 +46,4 @@
     • All expected network resources are available.
 ```
 ## 效果图
-    ![抠图效果预览](./result.jpg)
+    ![抠图效果预览](https://github.com/lyf571321556/interview_demo/blob/main/result.png)
