@@ -22,22 +22,31 @@ import Flutter
                 switch(method){
                 case MaskMethod.applyMaskToImage.rawValue:
                     DispatchQueue.global(qos: .userInitiated).async {
-                        guard let params = call.arguments as? Dictionary<String, AnyObject> else {
-                            result(FlutterError(code: "InvaliedParams", message: "Map<*, *>  is required", details:""))
-                            return
+                        do{
+                            guard let params = call.arguments as? Dictionary<String, AnyObject> else {
+                                result(FlutterError(code: "InvaliedParams", message: "Map<*, *>  is required", details:""))
+                                return
+                            }
+                            let originalImagePath = params["originalImagePath"] as! String
+                            NSLog("originalImagePath:%@",originalImagePath)
+                            let maskImagePath = params["maskImagePath"] as! String
+                            NSLog("maskImagePath:%@",maskImagePath)
+                            if( originalImagePath.isEmpty || maskImagePath.isEmpty){
+                                result(FlutterError(code:"InvaliedParams", message:"originalImagePath and maskImagePath is required",details: ""))
+                                return
+                            }
+                            let application = UIApplication.shared
+                            let maskedImagePath = try (application.delegate as! AppDelegate).applyMaskImgToOriginalImg(originalImagePath, maskImagePath)
+                            if(maskedImagePath==nil){
+                                result(FlutterError(code:"Failed", message:"unkonw error",details: ""))
+                                return
+                            }
+                            NSLog("maskedImagePath:%@",maskedImagePath!)
+                            result(maskedImagePath)
+                        }   catch   {
+                            result(FlutterError(code: "Failed", message: "occured error", details: error.localizedDescription))
                         }
-                        let originalImagePath = params["originalImagePath"] as! String
-                        NSLog("originalImagePath:%@",originalImagePath)
-                        let maskImagePath = params["maskImagePath"] as! String
-                        NSLog("maskImagePath:%@",maskImagePath)
-                        if( originalImagePath.isEmpty || maskImagePath.isEmpty){
-                            result(FlutterError(code:"InvaliedParams", message:"originalImagePath and maskImagePath is required",details: ""))
-                            return
-                        }
-                        let application = UIApplication.shared
-                        let maskedImagePath = (application.delegate as! AppDelegate).applyMaskImgToOriginalImg(originalImagePath, maskImagePath)
-                        NSLog("maskedImagePath:%@",maskedImagePath!)
-                        result(maskedImagePath)
+                       
                     }
                     break;
                 default:
@@ -49,7 +58,7 @@ import Flutter
         }
     }
     
-    fileprivate func applyMaskImgToOriginalImg(_ originalImagePath: String,_ maskImagePath: String) -> String?{
+    fileprivate func applyMaskImgToOriginalImg(_ originalImagePath: String,_ maskImagePath: String) throws -> String?{
         let vc = window.rootViewController as! FlutterViewController
         let originalImagePathKey = vc.lookupKey(forAsset: originalImagePath)
         NSLog("originalImagePathKey:%@",originalImagePathKey)
