@@ -46,4 +46,4 @@
     • All expected network resources are available.
 ```
 ## 效果图
-    ![result.jpg](result.jpg)
+    ![抠图效果预览](./result.jpg)
