@@ -34,16 +34,19 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   StreamController<dynamic>? _maskStreamController;
   Stream<dynamic>? _maskStream;
+
+  Offset _dragOffset = Offset.zero;
 
   @override
   void initState() {
     super.initState();
-    _maskStreamController = StreamController();
-    _maskStream = _maskStreamController!.stream.asBroadcastStream();
-    startApplyMask();
+    // _maskStreamController = StreamController();
+    // _maskStream = _maskStreamController!.stream.asBroadcastStream();
+    // startApplyMask();
   }
 
   @override
@@ -65,6 +68,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _onDragUpdate(DragUpdateDetails details) {
+    setState(() {
+      _dragOffset += details.delta;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,52 +81,68 @@ class _MyHomePageState extends State<MyHomePage> {
         title: const Text("利用遮罩实现抠图"),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Image.asset(
-              'images/origin.png',
-              fit: BoxFit.contain,
-              width: 200,
-              height: 200,
-            ),
-            Image.asset(
-              'images/mask.jpeg',
-              fit: BoxFit.contain,
-              width: 200,
-              height: 200,
-            ),
-            StreamBuilder(
-                stream: _maskStream,
-                builder: (context, snapshot) {
-                  Widget widget;
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.active:
-                      if (snapshot.hasError) {
-                        widget = const Text("请重试！");
-                      } else {
-                        widget = Image.file(File(snapshot.data.toString()),
-                            fit: BoxFit.contain, width: 200, height: 200);
-                      }
-                      break;
-                    case ConnectionState.waiting:
-                      widget = const CircularProgressIndicator(
-                        strokeWidth: 2.0,
-                        backgroundColor: Colors.transparent,
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(Colors.blueAccent),
-                      );
-                      break;
-                    default:
-                      widget = Container();
-                      break;
-                  }
-                  return widget;
-                })
-          ],
+          child: GestureDetector(
+        onPanUpdate: _onDragUpdate,
+        onPanEnd: (DragEndDetails details) {
+          print(details.toString());
+        },
+        child: Transform.translate(
+          offset: _dragOffset,
+          child: Image.asset(
+            'images/origin.png',
+            width: 150,
+            height: 150,
+            fit: BoxFit.contain,
+          ),
         ),
-      ),
+      )
+
+          // Column(
+          //   mainAxisAlignment: MainAxisAlignment.start,
+          //   crossAxisAlignment: CrossAxisAlignment.center,
+          //   children: <Widget>[
+          // Image.asset(
+          //   'images/origin.png',
+          //   fit: BoxFit.contain,
+          //   width: 150,
+          //   height: 150,
+          // )
+          // Image.asset(
+          //   'images/mask.jpeg',
+          //   fit: BoxFit.contain,
+          //   width: 200,
+          //   height: 200,
+          // ),
+          // StreamBuilder(
+          //     stream: _maskStream,
+          //     builder: (context, snapshot) {
+          //       Widget widget;
+          //       switch (snapshot.connectionState) {
+          //         case ConnectionState.active:
+          //           if (snapshot.hasError) {
+          //             widget = const Text("请重试！");
+          //           } else {
+          //             widget = Image.file(File(snapshot.data.toString()),
+          //                 fit: BoxFit.contain, width: 200, height: 200);
+          //           }
+          //           break;
+          //         case ConnectionState.waiting:
+          //           widget = const CircularProgressIndicator(
+          //             strokeWidth: 2.0,
+          //             backgroundColor: Colors.transparent,
+          //             valueColor:
+          //                 AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+          //           );
+          //           break;
+          //         default:
+          //           widget = Container();
+          //           break;
+          //       }
+          //       return widget;
+          //     })
+          //   ],
+          // ),
+          ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           startApplyMask();
